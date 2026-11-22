@@ -39,7 +39,7 @@ flowchart LR
 
 | Member | Role | Focus Area |
 | :--- | :--- | :--- |
-| **Akshat (Lead)** | AI/ML Lead | AI Orchestrator, LLM Tool Calling, LangGraph state, HITL Gate & Memory |
+| **Akshat** | AI/ML| AI Orchestrator, LLM Tool Calling, LangGraph state, HITL Gate & Memory |
 | **Yaksha** | Cloud & DevOps Lead | FastMCP K8s Server, RBAC, Minikube/Kind, Docker Compose & CI/CD |
 | **Bhoomi** | Full-Stack & QA/Docs Lead | React Chat UI, HITL Modal, PostgreSQL Audit DB, Test Cases & Docs |
 
