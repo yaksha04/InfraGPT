@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>InfraGPT — Autonomous Kubernetes SRE Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              slate: {
+                950: '#070b14',
+                900: '#0b1120',
+                850: '#0f172a',
+                800: '#1e293b',
+                700: '#334155',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #070b14;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        background-image:
+          radial-gradient(ellipse at top, rgba(34, 211, 238, 0.08), transparent 42%),
+          linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+        background-size: auto, 32px 32px, 32px 32px;
+      }
+      .score-ring {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        background: conic-gradient(#334155 calc(var(--p) * 1%), #1e293b 0);
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .score-good { background: conic-gradient(#34d399 calc(var(--p) * 1%), #1e293b 0); }
+      .score-warn { background: conic-gradient(#fbbf24 calc(var(--p) * 1%), #1e293b 0); }
+      .score-bad { background: conic-gradient(#fb7185 calc(var(--p) * 1%), #1e293b 0); }
+      .score-ring span {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: #070b14;
+        display: grid;
+        place-items: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        color: #e2e8f0;
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0b1120;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased overflow-hidden h-screen">
+    <div id="root" class="h-full"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

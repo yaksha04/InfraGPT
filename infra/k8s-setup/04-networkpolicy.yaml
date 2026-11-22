@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: isolate-production-traffic
+  namespace: production
+  labels:
+    security.infragpt.io/policy: zero-trust
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow incoming traffic from within the production namespace
+    - from:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 8080
+  egress:
+    # Allow outbound traffic to local DNS and internal cluster database
+    - to:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 5432
+        - protocol: UDP
+          port: 53

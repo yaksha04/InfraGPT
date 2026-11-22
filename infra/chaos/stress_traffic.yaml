@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-generator-job
+  namespace: production
+  labels:
+    app: chaos-load
+spec:
+  template:
+    metadata:
+      labels:
+        app: chaos-load
+    spec:
+      containers:
+        - name: load-generator
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Starting traffic burst against frontend-service...";
+              for i in $(seq 1 100); do
+                wget -q -O- http://frontend-service:80 > /dev/null 2>&1 || true;
+              done;
+              echo "Traffic burst complete.";
+      restartPolicy: Never
+  backoffLimit: 1

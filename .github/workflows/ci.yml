@@ -1,0 +1,67 @@
+name: InfraGPT Continuous Integration
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-mcp-server:
+    name: FastMCP Server & K8s Adapter Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r orchestrator/requirements.txt -r mcp-server/requirements.txt pytest
+
+      - name: Run MCP Server Unit Tests
+        run: |
+          python mcp-server/test_tools.py
+
+  test-orchestrator:
+    name: AI Orchestrator & HITL API Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r orchestrator/requirements.txt -r mcp-server/requirements.txt
+
+      - name: Run FastAPI & Agent Integration Tests
+        run: |
+          python orchestrator/test_api.py
+
+  build-frontend:
+    name: React 18 Web Dashboard Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install NPM Packages
+        working-directory: ./chat-ui
+        run: npm ci || npm install
+
+      - name: Build Production Bundle
+        working-directory: ./chat-ui
+        run: npm run build

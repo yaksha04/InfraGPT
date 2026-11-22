@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    environment: production
+    managed-by: infragpt
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: staging
+  labels:
+    environment: staging
+    managed-by: infragpt
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: infragpt-system
+  labels:
+    system: infragpt-core

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  namespace: production
+  labels:
+    app: payment-service
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-service
+  template:
+    metadata:
+      labels:
+        app: payment-service
+    spec:
+      containers:
+        - name: payment-service
+          image: busybox:1.36
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              MEM_LIMIT=$(cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo "0");
+              if [ "$MEM_LIMIT" -gt 350000000 ] 2>/dev/null; then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] INFO Memory limit verified adequate ($(($MEM_LIMIT/1024/1024))MB). Java heap allocated successfully.";
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] INFO PaymentProcessor v2.1.0 started and healthy on port 8080.";
+                exec sleep 86400;
+              else
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] WARN Memory limit is too low: 256Mi";
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR java.lang.OutOfMemoryError: Java heap space";
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] FATAL Container runtime killed process: Exit Code 137 (OOMKilled)";
+                sleep 2;
+                exit 137;
+              fi
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
