@@ -1,0 +1,63 @@
+services:
+  infragpt-mcp:
+    build:
+      context: .
+      dockerfile: mcp-server/Dockerfile
+    container_name: infragpt-mcp
+    environment:
+      INFRAGPT_K8S_MODE: ${INFRAGPT_K8S_MODE:-mock}
+      MCP_TRANSPORT: http
+      FASTMCP_HOST: 0.0.0.0
+      FASTMCP_PORT: 8000
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  infragpt-orchestrator:
+    build:
+      context: .
+      dockerfile: orchestrator/Dockerfile
+    container_name: infragpt-backend
+    ports:
+      - "8888:8888"
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ORCHESTRATOR_PORT: 8888
+      INFRAGPT_K8S_MODE: ${INFRAGPT_K8S_MODE:-mock}
+      MCP_SERVER_URL: http://infragpt-mcp:8000/mcp
+      POSTGRES_HOST: infragpt-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: infragpt_audit
+      POSTGRES_USER: infragpt
+      POSTGRES_PASSWORD: infragpt_secret
+    restart: unless-stopped
+    depends_on:
+      - infragpt-db
+      - infragpt-mcp
+
+  infragpt-dashboard:
+    build:
+      context: .
+      dockerfile: chat-ui/Dockerfile
+    container_name: infragpt-ui
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    depends_on:
+      - infragpt-orchestrator
+
+  infragpt-db:
+    image: postgres:16-alpine
+    container_name: infragpt-postgres
+    environment:
+      POSTGRES_DB: infragpt_audit
+      POSTGRES_USER: infragpt
+      POSTGRES_PASSWORD: infragpt_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
